@@ -9,3 +9,7 @@ services:
     build: db/.
     command: --default-authentication-plugin=mysql_native_password
     restart: always
+    # For connecting locally
+    # ports:
+    #  - "33060:3306"
+

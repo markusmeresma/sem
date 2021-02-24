@@ -29,7 +29,7 @@ public class App
         try
         {
             // Load Database driver
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
         }
         catch (ClassNotFoundException e)
         {
@@ -44,8 +44,11 @@ public class App
             try
             {
                 // Wait a bit for db to start
-                Thread.sleep(30000);
-                // Connect to database
+                Thread.sleep(0);
+                //Connect to database locally - use for debugging (repackaging the project and running the code is easier & faster
+                // con = DriverManager.getConnection("jdbc:mysql://localhost:33060/employees?useSSL=true", "root", "example");
+
+                // Connect to database inside docker
                 con = DriverManager.getConnection("jdbc:mysql://db:3306/employees?useSSL=false", "root", "example");
                 System.out.println("Successfully connected");
                 break;
