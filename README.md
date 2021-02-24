@@ -7,7 +7,7 @@
 
 ## Connecting to MySQL database
 
-> To connect **locally**:
+> Connecting **locally**:
 - change connection string in App.java
 - uncomment ports in docker-compose
 
