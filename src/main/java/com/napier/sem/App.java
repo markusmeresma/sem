@@ -12,13 +12,13 @@ public class App {
         // Connect to database
         a.connect();
 
+        // LAB 06
+        ArrayList<Employee> employees = a.getDepartment("Sales");
+        a.printSalaries(employees);
+
+        // CODE FROM PREVIOUS LABS
         // Extract employee salary information
         // ArrayList<Employee> employees = a.getAllSalaries();
-
-        // Get department information
-        Department dept = a.getDepartment("Engineering");
-        // Display results
-        a.displayDepartment(dept);
 
         // Extract salary information of a given role
         // Not working as intended - connects to a database but nothing happens
@@ -218,29 +218,40 @@ public class App {
         }
     }
 
-    public Department getDepartment(String dept_name) {
+    public ArrayList<Employee> getDepartment(String dept_name) {
         try {
             // Create String for SQL statement
             String strSelect =
-                    "SELECT dept_no, dept_name "
-                            + "FROM departments "
-                            + "WHERE dept_name LIKE ? ";
+                    "SELECT employees.emp_no, employees.first_name, employees.last_name, salaries.salary "
+                        + "FROM employees, salaries, dept_emp, departments "
+                        + "WHERE employees.emp_no = salaries.emp_no "
+                        + "AND employees.emp_no = dept_emp.emp_no "
+                        + "AND dept_emp.dept_no = departments.dept_no "
+                        + "AND salaries.to_date = '9999-01-01' "
+                        + "AND departments.dept_name LIKE ? "
+                        + "ORDER BY employees.emp_no ASC";
 
             PreparedStatement preparedStatement = con.prepareStatement(strSelect);
             preparedStatement.setString(1, dept_name);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
+            // Extract employee information
+            ArrayList<Employee> employees = new ArrayList<Employee>();
+
             while(resultSet.next()) {
-                Department dept = new Department();
-                dept.dept_no = resultSet.getString("dept_no");
-                dept.dept_name = resultSet.getString("dept_name");
-                return dept;
+                Employee emp = new Employee();
+                emp.emp_no = resultSet.getInt("employees.emp_no");
+                emp.first_name = resultSet.getString("employees.first_name");
+                emp.last_name = resultSet.getString("employees.last_name");
+                emp.salary = resultSet.getInt("salaries.salary");
+                employees.add(emp);
             }
+            return employees;
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            System.out.println("Failed to get departments");
+            System.out.println("Failed to get department");
         }
 
         return null;
@@ -255,9 +266,5 @@ public class App {
         } else {
             System.out.println("Department is NULL");
         }
-    }
-
-    public ArrayList<Employee> getSalariesByDepartment(Department dept) {
-        return null;
     }
 }
